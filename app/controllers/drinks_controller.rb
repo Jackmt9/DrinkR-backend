@@ -1,12 +1,29 @@
 class DrinksController < ApplicationController
     def index
+        options = {
+            include: {
+                likes: {
+                    only: [:drink_id, :user_id]
+                }
+            },
+            except: [:created_at, :updated_at]
+        }
         drinks = Drink.all
-        render json: drinks, except: [:created_at, :updated_at]
+        # render json: drinks, except: [:created_at, :updated_at]
+        render json: drinks.to_json(options)
     end
 
     def show
+        options = {
+            include: {
+                likes: {
+                    only: [:drink_id, :user_id]
+                }
+            },
+            except: [:created_at, :updated_at]
+        }
         drink = Drink.find(params[:id])
-        render json: drink, except: [:created_at, :updated_at]
+        render json: drink.to_json(options)
     end
 
     def destroy
@@ -15,19 +32,15 @@ class DrinksController < ApplicationController
         render json: {message: "Drink deleted"}
     end
 
-    # def new
-    #     drink = Drink.new()
-    # end
-
     def create
         drink = Drink.create(drink_params)
-        render json: {message: "Added to database"}
+        render json: drink
     end
 
     def update
         drink = Drink.find(params[:id])
         drink.update(drink_params)
-        render json: {message: "Drink Updated"}
+        render json: drink
     end
 
     private
